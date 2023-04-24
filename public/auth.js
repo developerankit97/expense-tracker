@@ -3,9 +3,30 @@ const name = document.querySelector('#name');
 const email = document.querySelector('#email');
 const password = document.querySelector('#password');
 const confirmPassword = document.querySelector('#confirm-password');
+const loginEmail = document.querySelector('#login-email');
+const loginPassword = document.querySelector('#login-password');
+const login = document.querySelector('.login');
 
 signup.addEventListener('click', userSignup);
+login.addEventListener('click', userLogin);
 email.addEventListener('keydown', validateEmail);
+
+async function userLogin(e) {
+    e.preventDefault();
+    if (loginEmail && loginPassword) {
+        try {
+            const response = await axios.post('http://localhost:3000/user/login', { "email": loginEmail.value, "password": loginPassword.value });
+            console.log(response);
+            // localStorage.setItem('token', response.data.token);
+            // window.location.href = 'index.html';
+        } catch (error) {
+            console.log(error);
+            alert('Invalid Email or Password');
+        }
+    } else {
+        alert('Enter All the Fields');
+    }
+}
 
 async function userSignup(e) {
     e.preventDefault();
