@@ -5,6 +5,8 @@ const path = require('path');
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expensesRoutes');
 const sequelize = require('./util/database');
+const User = require('./models/user');
+const Expenses = require('./models/expense');
 
 const app = express()
 
@@ -16,6 +18,9 @@ app.use(bodyParser.json({ extended: false }));
 
 app.use(authRoutes);
 app.use(expenseRoutes);
+
+User.hasMany(Expenses);
+Expenses.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 
 sequelize
     .sync()

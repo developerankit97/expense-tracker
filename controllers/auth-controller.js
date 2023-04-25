@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.postAddUser = async (req, res, next) => {
     const name = req.body.name;
@@ -40,25 +41,23 @@ exports.postLoginUser = async (req, res, next) => {
                 error: 'User does not exist'
             });
         }
-        console.log(password, user.password);
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(401).json({
                 error: 'Invalid password'
             });
         }
-        // const token = jwt.sign(
-        //     {
-        //         id: user.id,
-        //         name: user.name,
-        //         email: user.email
-        //     },
-        //     process.env.JWT_SECRET,
-        //     { expiresIn: '1h' }
-        // );
+        const token = jwt.sign(
+            {
+                id: user.id,
+                name: user.name
+            },
+            'ZindagiNaMilegiDubara',
+            { expiresIn: '1h' }
+        );
         res.status(200).json({
             message: "Login successful",
-            user: user
+            token: token
         });
     } catch (err) {
         console.log(err);

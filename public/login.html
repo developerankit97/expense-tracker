@@ -19,10 +19,10 @@
         <nav>
             <ul class="nav nav-pills justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link active" aria-current="page" href="/public/login.html">Login</a>
+                    <a class="nav-link active" aria-current="page" href="/login.html">Login</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link active" href="/public/signup.html">Signup</a>
+                    <a class="nav-link active" href="/signup.html">Signup</a>
                 </li>
             </ul>
         </nav>
@@ -65,10 +65,13 @@
             if (loginEmail.value && loginPassword.value) {
                 try {
                     const response = await axios.post('http://localhost:3000/user/login', { "email": loginEmail.value, "password": loginPassword.value });
-                    // localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('token', response.data.token);
                     window.location.href = 'http://localhost:3000/index.html';
                 } catch (error) {
-                    alert(error.response.data.error);
+                    if (error.response.status == 404) {
+                        alert(error.response.data.error + ". Please signup and try again");
+                        window.location.href = 'http://localhost:3000/signup.html';
+                    }
                 }
             } else {
                 alert('Enter All the Fields');
