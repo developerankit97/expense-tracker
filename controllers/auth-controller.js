@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 exports.postAddUser = async (req, res, next) => {
     const name = req.body.name;
@@ -12,10 +13,11 @@ exports.postAddUser = async (req, res, next) => {
                 user: user
             });
         }
+        const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             name: name,
             email: email,
-            password: password
+            password: hashedPassword
         });
         res.status(201).json({
             user: newUser
@@ -38,7 +40,9 @@ exports.postLoginUser = async (req, res, next) => {
                 error: 'User does not exist'
             });
         }
-        if (user.password !== password) {
+        console.log(password, user.password);
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
             return res.status(401).json({
                 error: 'Invalid password'
             });

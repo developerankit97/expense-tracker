@@ -54,7 +54,27 @@
         integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
-    <script src="auth.js"></script>
+    <script>
+        const loginEmail = document.querySelector('#login-email');
+        const loginPassword = document.querySelector('#login-password');
+        const login = document.querySelector('.login');
+
+        login.addEventListener('click', userLogin);
+        async function userLogin(e) {
+            e.preventDefault();
+            if (loginEmail.value && loginPassword.value) {
+                try {
+                    const response = await axios.post('http://localhost:3000/user/login', { "email": loginEmail.value, "password": loginPassword.value });
+                    // localStorage.setItem('token', response.data.token);
+                    window.location.href = 'http://localhost:3000/index.html';
+                } catch (error) {
+                    alert(error.response.data.error);
+                }
+            } else {
+                alert('Enter All the Fields');
+            }
+        }
+    </script>
 </body>
 
 </html>
