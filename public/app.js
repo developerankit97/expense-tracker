@@ -37,13 +37,6 @@ async function getExpenses() {
     } catch (error) {
         console.log(error);
     }
-    // let expenses;
-    // if (localStorage.getItem('expenses') == null) {
-    //     expenses = [];
-    // } else {
-    //     expenses = JSON.parse(localStorage.getItem('expenses'));   
-    // }
-
 }
 
 async function addExpense(e) {
@@ -68,13 +61,13 @@ async function addExpense(e) {
                 const li = document.createElement('li');
                 li.className = ('list-group-item d-flex justify-content-between align-items-center');
                 const span = document.createElement('span');
-                span.appendChild(document.createTextNode(`${response.data.amount} ${expenseInfo.description} ${expenseCategory.category}`));
+                span.appendChild(document.createTextNode(`${response.data.amount} ${response.data.description} ${response.data.category}`));
                 li.appendChild(span);
                 const div = document.createElement('div');
                 const edit = document.createElement('a');
                 edit.appendChild(document.createTextNode('Edit'));
                 edit.className = ('edit btn btn-primary');
-                deleteIcon.setAttribute('id', `${expense.id}`);
+                edit.setAttribute('id', `${response.data.id}`);
                 div.appendChild(edit);
                 const deleteIcon = document.createElement('a');
                 deleteIcon.appendChild(document.createTextNode('Delete'));
@@ -95,47 +88,6 @@ async function addExpense(e) {
     }
 }
 
-// function addExpenseInLocalStorage(amount, info, category) {
-//     let expenses;
-//     if (localStorage.getItem('expenses') == null) {
-//         expenses = [];
-//     } else {
-//         expenses = JSON.parse(localStorage.getItem('expenses'));
-//     }
-
-//     let isUpdationNotHappening = true;
-//     expenses.forEach(expense => {
-//         if (expense.amount == amount || expense.info == info || expense.category == category) {
-//             expense.amount = amount;
-//             expense.info = info;
-//             expense.category = category;
-//             isUpdationNotHappening = false;
-//         }
-//     });
-
-//     if (isUpdationNotHappening) {
-//         const li = document.createElement('li');
-//         li.className = ('list-group-item d-flex justify-content-between align-items-center');
-//         const span = document.createElement('span');
-//         span.appendChild(document.createTextNode(`${expenseAmount.value} ${expenseInfo.value} ${expenseCategory.value}`));
-//         li.appendChild(span);
-//         const div = document.createElement('div');
-//         const edit = document.createElement('a');
-//         edit.appendChild(document.createTextNode('Edit'));
-//         edit.className = ('edit btn btn-primary');
-//         div.appendChild(edit);
-//         const deleteIcon = document.createElement('a');
-//         deleteIcon.appendChild(document.createTextNode('Delete'));
-//         deleteIcon.className = ('delete btn btn-danger');
-//         div.appendChild(deleteIcon);
-//         li.appendChild(div);
-//         expenseList.appendChild(li);
-//         let expense = { 'amount': amount, 'info': info, 'category': category };
-//         expenses.push(expense);
-//     }
-//     localStorage.setItem('expenses', JSON.stringify(expenses));
-// }
-
 async function deleteExpense(e) {
     if (e.target.classList.contains('delete')) {
         const id = e.target.getAttribute('id');
@@ -150,19 +102,6 @@ async function deleteExpense(e) {
         }
     }
 }
-
-// function deleteExpenseFromLocalStorage(expenseItem) {
-//     let expenses;
-//     if (localStorage.getItem('expenses') == null) {
-//         expenses = [];
-//     } else {
-//         expenses = JSON.parse(localStorage.getItem('expenses'));
-//     }
-//     expenses = expenses.filter(expense => {
-//         return (expenseItem.textContent.split(' ')[0] != expense.amount);
-//     });
-//     localStorage.setItem('expenses', JSON.stringify(expenses));
-// }
 
 async function editExpense(e) {
     if (e.target.classList.contains('edit')) {
@@ -180,19 +119,3 @@ async function editExpense(e) {
         }
     }
 }
-
-// function editExpenseFromLocalStorage(expenseItem) {
-//     let expenses;
-//     if (localStorage.getItem('expenses') == null) {
-//         expenses = [];
-//     } else {
-//         expenses = JSON.parse(localStorage.getItem('expenses'));
-//     }
-//     expenses.forEach(expense => {
-//         if (expenseItem.textContent.split(' ')[0] == expense.amount) {
-//             expenseAmount.value = expense.amount;
-//             expenseInfo.value = expense.info;
-//             expenseCategory.value = expense.category;
-//         }
-//     });
-// }
