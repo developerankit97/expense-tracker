@@ -1,16 +1,49 @@
 let expenseAmount = document.querySelector('#expense-amount');
 let expenseInfo = document.querySelector('#expense-info');
 let expenseCategory = document.querySelector('#expense-category');
-let btn = document.querySelector('.btn');
+let btn = document.querySelector('.add-update');
 let expenseList = document.querySelector('.expense-list');
+let buyBtn = document.querySelector('.buy-btn');
 
 document.addEventListener('DOMContentLoaded', getExpenses);
 btn.addEventListener('click', addExpense);
 expenseList.addEventListener('click', editExpense);
 expenseList.addEventListener('click', deleteExpense);
+buyBtn.addEventListener('click', addBuyPremium);
+
+async function addBuyPremium(e) {
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            const response = await axios.get("http://localhost:3000/purchase/premiummembership", { headers: { 'Authorization': token } });
+            var options = {
+                "key": response.data.key_id,
+                "order": response.data.order.orderId,
+                "handler": async function (response) {
+                    await axios.post("http://localhost:3000/updatetransactionstatus", {
+                        orderId: options.order,
+                        paymentId: response.razorpay_payment_id,
+                        headers: { 'Authorization': token }
+                    });
+                    alert("You are premium user now");
+                }
+            }
+            const razorpay = new Razorpay(options);
+            razorpay.open();
+            e.preventDefault();
+
+
+            razorpay.on('payment.failed', (response) => {
+                console.log(response.error);
+                alert('payment failed');
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
 
 async function getExpenses() {
-
     const token = localStorage.getItem('token');
     if (token) {
         try {
