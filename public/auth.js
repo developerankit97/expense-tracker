@@ -7,21 +7,21 @@ const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
 const login = document.querySelector('.login');
 
-signup.addEventListener('click', userSignup);
 login.addEventListener('click', userLogin);
+signup.addEventListener('click', userSignup);
 email.addEventListener('keydown', validateEmail);
 
 async function userLogin(e) {
     e.preventDefault();
-    if (loginEmail && loginPassword) {
+    if (loginEmail.value && loginPassword.value) {
         try {
             const response = await axios.post('http://localhost:3000/user/login', { "email": loginEmail.value, "password": loginPassword.value });
             console.log(response);
             // localStorage.setItem('token', response.data.token);
-            // window.location.href = 'index.html';
+            window.location.href = 'http://localhost:3000/index.html';
         } catch (error) {
-            console.log(error);
-            alert('Invalid Email or Password');
+            console.log(error.response.data.error);
+            alert(error.response.data.error);
         }
     } else {
         alert('Enter All the Fields');

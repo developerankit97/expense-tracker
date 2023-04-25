@@ -10,6 +10,8 @@ const authController = require('../controllers/auth-controller');
 
 router.post('/user/signup', authController.postAddUser);
 
+router.post('/user/login', authController.postLoginUser);
+
 // router.put('/expenses/:id', expensesController.putUpdateExpense);
 
 // router.delete('/expenses/:id', expensesController.deleteExpense);
