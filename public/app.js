@@ -118,7 +118,6 @@ async function updateLeaderboard(e) {
     try {
         const response = await axios.get("http://localhost:3000/premium/showleaderboard");
         const leaderBoardList = document.querySelector('.leaderboard-list');
-        console.log(response.data)
         response.data.forEach(userDetail => {
             let output = `<li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>Name - ${userDetail.name} Total Expense - ${userDetail.total_cost} Rs</span>
