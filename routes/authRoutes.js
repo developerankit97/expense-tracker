@@ -14,6 +14,8 @@ router.post('/user/signup', authController.postAddUser);
 
 router.post('/user/login', authController.postLoginUser);
 
+router.post('/password/forgotpassword', authController.postForgotPassword);
+
 // router.put('/expenses/:id', expensesController.putUpdateExpense);
 
 // router.delete('/expenses/:id', expensesController.deleteExpense);
