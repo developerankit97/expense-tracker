@@ -16,6 +16,10 @@ router.post('/user/login', authController.postLoginUser);
 
 router.post('/password/forgotpassword', authController.postForgotPassword);
 
+router.get('/password/resetpassword/:resetId', authController.getResetPasswordForm);
+
+router.get('/password/updatepassword/:updateId', authController.updatePassword);
+
 // router.put('/expenses/:id', expensesController.putUpdateExpense);
 
 // router.delete('/expenses/:id', expensesController.deleteExpense);
