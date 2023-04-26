@@ -1,46 +1,43 @@
 const Razorpay = require('razorpay');
 const Order = require('../models/order');
-const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 exports.getPremiumMemberShip = async (req, res, next) => {
-    try {
-        const razorpay = new Razorpay({
-            key_id: 'rzp_test_QvHFzixEKRayNt',
-            key_secret: 'Zld2lHMZPRKXBPUkoGQweHOF'
-        });
+    const razorpay = new Razorpay({
+        key_id: 'rzp_test_juYOltsrCYTr7t',
+        key_secret: 'AhJ26nonZIOvnyIXSeZtz4eO'
+    });
 
-        razorpay.orders.create({
-            amount: 2500,
-            currency: 'INR',
-        }, (err, order) => {
-            if (err) {
-                console.log('working here', err);
-                throw new Error(JSON.stringify(err));
-            } else {
-                Order.create({
-                    orderId: order.id,
-                    userId: jwt.verify(req.headers.authorization, 'ZindagiNaMilegiDubara').id,
-                    status: 'pending'
-                }).then(order => {
-                    return res.status(201).json({
-                        order,
-                        key_id: razorpay.key_id
-                    })
+    razorpay.orders.create({
+        amount: 2500,
+        currency: 'INR',
+    }, (err, order) => {
+        if (err) {
+            return res.status(500)
+                .json({
+                    error: err,
+                    message: "Order id not created in razorpay"
+                });
+        } else {
+            Order.create({
+                orderId: order.id,
+                userId: req.user.id,
+                status: 'pending'
+            }).then(order => {
+                return res.status(201).json({
+                    order,
+                    key_id: razorpay.key_id
                 })
-            }
-        })
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        });
-    }
+            }).catch(e => console.log(e));
+        }
+    })
+
 }
 
 exports.postUpdatetransactionStatus = (req, res, next) => {
     Order.update({
         paymentId: req.body.paymentId,
-        status: 'success'
+        status: req.body.status
     },
         {
             where: {
@@ -52,8 +49,10 @@ exports.postUpdatetransactionStatus = (req, res, next) => {
             isPremium: true
         }, {
             where: {
-                id: jwt.verify(req.headers.authorization, 'ZindagiNaMilegiDubara').id
+                id: req.user.id
             }
         })
-    }).then().catch(e => console.log(e));
+    })
+        .then()
+        .catch(e => console.log(e));
 }

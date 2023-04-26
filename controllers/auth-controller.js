@@ -2,6 +2,11 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+// exports.getUser = (req, res, next) => {
+//     res.json(req.user);
+// }
+
 exports.postAddUser = async (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
@@ -18,7 +23,8 @@ exports.postAddUser = async (req, res, next) => {
         const newUser = await User.create({
             name: name,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            isPremium: false
         });
         res.status(201).json({
             user: newUser
@@ -52,12 +58,13 @@ exports.postLoginUser = async (req, res, next) => {
                 id: user.id,
                 name: user.name
             },
-            'ZindagiNaMilegiDubara',
-            { expiresIn: '1h' }
+            'ZindagiNaMilegiDubara'
         );
         res.status(200).json({
             message: "Login successful",
-            token: token
+            token: token,
+            username: user.name,
+            isPremium: user.isPremium
         });
     } catch (err) {
         console.log(err);

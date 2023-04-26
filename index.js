@@ -5,6 +5,7 @@ const path = require('path');
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expensesRoutes');
 const purchaseRoutes = require('./routes/purchase');
+const premiumRoutes = require('./routes/premiumRoute');
 const sequelize = require('./util/database');
 const User = require('./models/user');
 const Expenses = require('./models/expense');
@@ -21,6 +22,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use(authRoutes);
 app.use(expenseRoutes);
 app.use(purchaseRoutes);
+app.use(premiumRoutes);
 
 User.hasMany(Expenses);
 Expenses.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });

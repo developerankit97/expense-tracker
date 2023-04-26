@@ -4,38 +4,24 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 exports.getAllExpenses = (req, res, next) => {
-    const userId = jwt.verify(req.query.token, 'ZindagiNaMilegiDubara').id
-    if (userId) {
-        Expenses.findAll({
-            where: {
-                userId: userId
-            }
-        })
-            .then(response => res.json(response))
-            .catch(err => console.log(err));
-    } else {
-        res.status(401).json({
-            message: 'Unauthorized User'
-        });
-    }
+    Expenses.findAll({
+        where: {
+            userId: req.user.id
+        }
+    })
+        .then(response => res.json(response))
+        .catch(err => console.log(err));
 }
 
 exports.getOneExpense = (req, res, next) => {
-    const userId = jwt.verify(req.query.token, 'ZindagiNaMilegiDubara').id
-    if (userId) {
-        Expenses.findByPk({
-            where: {
-                id: req.params.id,
-                userId: jwt.verify(req.query.token, 'ZindagiNaMilegiDubara').id
-            }
-        })
-            .then(response => res.json(response))
-            .catch(err => console.log(err));
-    } else {
-        res.status(401).json({
-            message: 'Unauthorized User'
-        });
-    }
+    Expenses.findOne({
+        where: {
+            id: req.params.id,
+            userId: req.user.id
+        }
+    })
+        .then(response => res.json(response))
+        .catch(err => console.log(err));
 }
 
 exports.postAddExpense = (req, res, next) => {
@@ -46,10 +32,9 @@ exports.postAddExpense = (req, res, next) => {
         amount: amount,
         description: description,
         category: category,
-        userId: jwt.verify(req.body.token, 'ZindagiNaMilegiDubara').id
+        userId: req.user.id
     })
         .then(response => {
-            console.log("5");
             res.json(response)
         })
         .catch(err => console.log(err));
@@ -64,7 +49,7 @@ exports.putUpdateExpense = (req, res, next) => {
     }, {
         where: {
             id: expenseId,
-            userId: jwt.verify(req.body.token, 'ZindagiNaMilegiDubara').id
+            userId: req.user.id
         }
     }
     )
@@ -73,19 +58,12 @@ exports.putUpdateExpense = (req, res, next) => {
 }
 
 exports.deleteExpense = (req, res, next) => {
-    const userId = jwt.verify(req.query.token, 'ZindagiNaMilegiDubara').id
-    if (userId) {
-        Expenses.destroy({
-            where: {
-                id: req.params.id,
-                userId: jwt.verify(req.query.token, 'ZindagiNaMilegiDubara').id
-            }
-        })
-            .then(response => res.json(response))
-            .catch(err => console.log(err));
-    } else {
-        res.status(401).json({
-            message: 'Unauthorized User'
-        });
-    }
+    Expenses.destroy({
+        where: {
+            id: req.params.id,
+            userId: req.user.id
+        }
+    })
+        .then(response => res.json(response))
+        .catch(err => console.log(err));
 }

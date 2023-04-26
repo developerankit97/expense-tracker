@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const purchaseController = require('../controllers/purchase-controller');
+const authMiddleware = require('../middleware/auth-middleware');
 
 // router.get('/expenses', expensesController.getAllExpenses);
 
@@ -8,9 +9,9 @@ const purchaseController = require('../controllers/purchase-controller');
 
 // router.get('/expenses/:id', expensesController.getOneExpense);
 
-router.get('/purchase/premiummembership', purchaseController.getPremiumMemberShip);
+router.get('/purchase/premiummembership', authMiddleware.authenticateUser, purchaseController.getPremiumMemberShip);
 
-router.post('/updatetransactionstatus', purchaseController.postUpdatetransactionStatus);
+router.post('/updatetransactionstatus', authMiddleware.authenticateUser, purchaseController.postUpdatetransactionStatus);
 
 // router.post('/user/login', authController.postLoginUser);
 
