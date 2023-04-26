@@ -4,8 +4,8 @@ const User = require('../models/user');
 
 exports.getPremiumMemberShip = async (req, res, next) => {
     const razorpay = new Razorpay({
-        key_id: 'rzp_test_juYOltsrCYTr7t',
-        key_secret: 'AhJ26nonZIOvnyIXSeZtz4eO'
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET
     });
 
     razorpay.orders.create({

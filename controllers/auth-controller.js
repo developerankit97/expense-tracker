@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const ForgotPasswordRequest = require('../models/reset-password');
 const sgMail = require('@sendgrid/mail');
 const { sendResBlock } = require('../util/helpers');
-sgMail.setApiKey('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');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 // exports.getUser = (req, res, next) => {
@@ -63,7 +63,7 @@ exports.postLoginUser = async (req, res, next) => {
                 id: user.id,
                 name: user.name
             },
-            'ZindagiNaMilegiDubara'
+            process.env.JWT_SECRET_KEY,
         );
         res.status(200).json({
             message: "Login successful",

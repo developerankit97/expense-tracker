@@ -1,3 +1,5 @@
+const dotenv = require('dotenv');
+dotenv.config();
 const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -35,6 +37,6 @@ ForgotPasswordRequest.belongsTo(User);
 sequelize
     .sync()
     .then(() => {
-        app.listen(3000)
+        app.listen(process.env.PORT)
     })
     .catch(err => console.error(err));
