@@ -7,6 +7,7 @@ let expenseList = document.querySelector('.expense-list');
 let buyBtn = document.querySelector('.buy-btn');
 let leaderboardBtn = document.querySelector('#leaderboard-btn');
 let pagination = document.querySelector('.pagination');
+let itemsPerPage = document.querySelector('#items-per-page');
 
 // Event Handlers
 document.addEventListener('DOMContentLoaded', getExpenses);
@@ -16,27 +17,38 @@ expenseList.addEventListener('click', deleteExpense);
 buyBtn.addEventListener('click', addBuyPremium);
 leaderboardBtn.addEventListener('click', updateLeaderboard);
 pagination.addEventListener('click', updatePagination);
+itemsPerPage.addEventListener('change', updateItemsPerPage);
+
+function updateItemsPerPage(e) {
+    localStorage.setItem('items', itemsPerPage.value);
+    getExpenses(e, itemsPerPage.value);
+}
 
 // CRUD Functions
 
 // Get All Expenses From Database
-async function getExpenses() {
+async function getExpenses(e, items = 10) {
     const token = localStorage.getItem('token');
+    if (localStorage.getItem('items')) {
+        items = localStorage.getItem('items');
+        itemsPerPage.value = items;
+    }
     let pageNumber = 1;
     if (token) {
         try {
-            const response = await axios.get(`http://localhost:3000/expenses?page=${pageNumber}`, { headers: { 'Authorization': token } });
+            const response = await axios.get(`http://localhost:3000/expenses?items=${items}&page=${pageNumber}`, { headers: { 'Authorization': token } });
             const data = response.data.response.expenseResponse;
             document.querySelector('.logged-user').textContent = response.data.response.username;
             setPremium(response.data.response.ispremium);
-            data.rows.forEach((expense, index) => {
+            expenseList.innerHTML = '';
+            data.rows.forEach(expense => {
                 generateHTML(expense.id, expense.amount, expense.description, expense.category);
             })
             pagination.innerHTML = '';
             if (pageNumber) {
                 pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber}</button></li>`;
             }
-            if (data.count > (pageNumber * 10)) {
+            if (data.count > (pageNumber * itemsPerPage)) {
                 pagination.innerHTML += `<li class="page-item mx-2"><button class="page-link btn">${pageNumber + 1}</button></li>`
             }
             if (pageNumber > 1) {
@@ -125,11 +137,12 @@ async function editExpense(e) {
 // Pagination
 async function updatePagination(e) {
     const token = localStorage.getItem('token');
+    const itemsPerPage = localStorage.getItem('items');
     let pageNumber = parseInt(e.target.textContent);
     console.log(pageNumber);
     if (token) {
         try {
-            const response = await axios.get(`http://localhost:3000/expenses?page=${pageNumber}`, { headers: { 'Authorization': token } });
+            const response = await axios.get(`http://localhost:3000/expenses?page=${pageNumber}&items=${itemsPerPage}`, { headers: { 'Authorization': token } });
             const data = response.data.response.expenseResponse;
             console.log(data.rows)
             document.querySelector('.logged-user').textContent = response.data.response.username;
@@ -142,7 +155,7 @@ async function updatePagination(e) {
             if (pageNumber) {
                 pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber}</button></li>`;
             }
-            if (data.count > (pageNumber * 10)) {
+            if (data.count > (pageNumber * itemsPerPage)) {
                 pagination.innerHTML += `<li class="page-item mx-2"><button class="page-link btn">${pageNumber + 1}</button></li>`
             }
             if (pageNumber > 1) {

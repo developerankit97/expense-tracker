@@ -6,11 +6,13 @@ const { catchBlock, sendResBlock } = require('../util/helpers');
 
 exports.getAllExpenses = async (req, res, next) => {
     const page = Number(req.query.page) - 1;
+    const items = Number(req.query.items);
+    console.log(page, items)
     try {
         const expenseResponse = await Expenses.findAndCountAll({
             where: { userId: req.user.id },
-            offset: page * 10,
-            limit: 10
+            offset: page * items,
+            limit: items
         })
         sendResBlock(res, { expenseResponse, username: req.user.name, isPremium: req.user.isPremium })
     } catch (err) {
