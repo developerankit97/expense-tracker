@@ -5,10 +5,16 @@ const sequelize = require('../util/database');
 const { catchBlock, sendResBlock } = require('../util/helpers');
 
 exports.getAllExpenses = async (req, res, next) => {
+    const page = Number(req.query.page) - 1;
     try {
-        const response = await Expenses.findAll({ where: { userId: req.user.id } });
-        sendResBlock(res, response)
+        const expenseResponse = await Expenses.findAndCountAll({
+            where: { userId: req.user.id },
+            offset: page * 10,
+            limit: 10
+        })
+        sendResBlock(res, { expenseResponse, username: req.user.name, isPremium: req.user.isPremium })
     } catch (err) {
+        console.log(err);
         catchBlock(res, err, 'Expense could not be retrieved');
     }
 }

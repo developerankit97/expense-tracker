@@ -6,6 +6,7 @@ let btn = document.querySelector('.add-update');
 let expenseList = document.querySelector('.expense-list');
 let buyBtn = document.querySelector('.buy-btn');
 let leaderboardBtn = document.querySelector('#leaderboard-btn');
+let pagination = document.querySelector('.pagination');
 
 // Event Handlers
 document.addEventListener('DOMContentLoaded', getExpenses);
@@ -14,31 +15,39 @@ expenseList.addEventListener('click', editExpense);
 expenseList.addEventListener('click', deleteExpense);
 buyBtn.addEventListener('click', addBuyPremium);
 leaderboardBtn.addEventListener('click', updateLeaderboard);
+pagination.addEventListener('click', updatePagination);
 
 // CRUD Functions
 
 // Get All Expenses From Database
 async function getExpenses() {
-    if (localStorage.getItem('isPremium') == "true") {
-        document.querySelector('.premium-text').style.display = 'block';
-        buyBtn.style.display = 'none';
-        document.querySelector('.leaderboard').classList.remove('d-none');
-    } else {
-        document.querySelector('.premium-text').style.display = 'none';
-        buyBtn.style.display = 'block';
-        document.querySelector('.leaderboard').classList.add('d-none');
-    }
     const token = localStorage.getItem('token');
-    document.querySelector('.logged-user').textContent = localStorage.getItem('name');
+    let pageNumber = 1;
     if (token) {
         try {
-            const response = await axios.get(`http://localhost:3000/expenses`, { headers: { 'Authorization': token } });
-            response.data.response.forEach(expense => {
+            const response = await axios.get(`http://localhost:3000/expenses?page=${pageNumber}`, { headers: { 'Authorization': token } });
+            const data = response.data.response.expenseResponse;
+            document.querySelector('.logged-user').textContent = response.data.response.username;
+            setPremium(response.data.response.ispremium);
+            data.rows.forEach((expense, index) => {
                 generateHTML(expense.id, expense.amount, expense.description, expense.category);
             })
+            pagination.innerHTML = '';
+            if (pageNumber) {
+                pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber}</button></li>`;
+            }
+            if (data.count > (pageNumber * 10)) {
+                pagination.innerHTML += `<li class="page-item mx-2"><button class="page-link btn">${pageNumber + 1}</button></li>`
+            }
+            if (pageNumber > 1) {
+                pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber - 1}</button></li>` + pagination.innerHTML;
+            }
         } catch (error) {
             console.log(error);
         }
+    } else {
+        alert("Please Login");
+        window.location.href = 'http://localhost:3000/login.html';
     }
 }
 
@@ -113,6 +122,41 @@ async function editExpense(e) {
     }
 }
 
+// Pagination
+async function updatePagination(e) {
+    const token = localStorage.getItem('token');
+    let pageNumber = parseInt(e.target.textContent);
+    console.log(pageNumber);
+    if (token) {
+        try {
+            const response = await axios.get(`http://localhost:3000/expenses?page=${pageNumber}`, { headers: { 'Authorization': token } });
+            const data = response.data.response.expenseResponse;
+            console.log(data.rows)
+            document.querySelector('.logged-user').textContent = response.data.response.username;
+            setPremium(response.data.response.ispremium);
+            expenseList.innerHTML = '';
+            data.rows.forEach((expense, index) => {
+                generateHTML(expense.id, expense.amount, expense.description, expense.category);
+            })
+            pagination.innerHTML = '';
+            if (pageNumber) {
+                pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber}</button></li>`;
+            }
+            if (data.count > (pageNumber * 10)) {
+                pagination.innerHTML += `<li class="page-item mx-2"><button class="page-link btn">${pageNumber + 1}</button></li>`
+            }
+            if (pageNumber > 1) {
+                pagination.innerHTML = `<li class="page-item mx-2"><button class="page-link btn">${pageNumber - 1}</button></li>` + pagination.innerHTML;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        alert("Please Login");
+        window.location.href = 'http://localhost:3000/login.html';
+    }
+}
+
 // Leaderboard information
 async function updateLeaderboard(e) {
     try {
@@ -120,9 +164,10 @@ async function updateLeaderboard(e) {
         const leaderBoardList = document.querySelector('.leaderboard-list');
         leaderBoardList.innerHTML = '';
         response.data.forEach(userDetail => {
-            let output = `<li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Name - ${userDetail.name} Total Expense - ${userDetail.totalAmount} Rs</span>
-                    </li>`;
+            let output = `<tr>
+                            <td class="fw-bold">${userDetail.name}</td>
+                            <td>${userDetail.totalAmount} Rs</td>
+                        </tr>`;
             leaderBoardList.innerHTML += output;
         })
     } catch (e) {
@@ -142,10 +187,7 @@ async function addBuyPremium(e) {
                 "description": "Test Transaction",
                 "order_id": response.data.order.orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                 "handler": async function (response) {
-                    document.querySelector('.premium-text').style.display = 'block';
-                    buyBtn.style.display = 'none';
-                    localStorage.setItem('isPremium', true);
-                    document.querySelector('.leaderboard').classList.remove('d-none');
+                    setPremium();
                     await axios.post("http://localhost:3000/updatetransactionstatus", {
                         orderId: options.order_id,
                         paymentId: response.razorpay_payment_id,
@@ -172,13 +214,15 @@ async function addBuyPremium(e) {
 
 // Helper functions
 function generateHTML(id, am, ds, ca) {
-    let output = `<li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>${am} - ${ds} - ${ca}</span>
-                        <div>
-                            <a class="edit btn btn-primary" id="${id}">Edit</a>
-                            <a class="delete btn btn-danger" id="${id}">Delete</a>
-                        </div>
-                    </li>`;
+    let output = `<tr>
+                    <td>${ds}</td>
+                    <td>${ca}</td>
+                    <td>${am} rs</td>
+                    <td>
+                        <button type="button" id="${id}" class="btn small edit py-0">Edit</button>
+                        <button type="button" id="${id}" class="btn small delete py-0">Delete</button>
+                    </td>
+                </tr>`;
     expenseList.innerHTML += output;
 }
 
@@ -186,4 +230,12 @@ function setInputValues(a = '', d = '', c = '') {
     expenseAmount.value = a;
     expenseInfo.value = d;
     expenseCategory.value = c;
+}
+
+function setPremium(ispremium = true) {
+    if (ispremium) {
+        document.querySelector('.premium-text').classList.remove('d-none');
+        buyBtn.classList.add('d-none')
+        document.querySelector('.leaderboard').classList.remove('d-none');
+    }
 }

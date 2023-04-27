@@ -45,15 +45,15 @@
 <body>
     <header>
         <div class="container-fluid d-flex justify-content-between align-items-center py-3">
-            <h1>Expense Tracker</h1>
+            <h1 class="text-light">Expense Tracker</h1>
             <div class="d-flex justify-content-center align-items-center">
                 <a href="http://localhost:3000/reports.html" class="btn mx-1">Generate Report</a>
                 <button class="btn buy-btn mx-1">Buy Premium</button>
-                <div>
-                    <h4 class="logged-user mx-2">
-                        </h2>
-
-                        <h4 class="fw-bold premium-text" style="display: none;">Premium Member</h4>
+                <div class="text-center ms-5">
+                    <h3 class="logged-user mx-2 mb-0">
+                    </h3>
+                    <h6 class="premium-text border border-1 py-1 bg-primary-subtle m-0 rounded-3 d-none">Premium Member
+                    </h6>
                 </div>
             </div>
         </div>
@@ -95,55 +95,48 @@
                     </form>
                 </div>
             </div>
-            <div class="card mx-2 overflow-scroll" style="width: 100%;height: 80vh;">
+            <div class="card mx-2 overflow-auto" style="width: 100%;height: 80vh;">
+                <div class="card-header d-flex justify-content-around">
+                    <h4 class="text-center">Expenses List</h4>
+                </div>
                 <div class="card-body">
-                    <h3 class="text-center px-1">Expenses List</h2>
-                        <ul class="list-group expense-list">
-                            <table class="table table-bordered border-primary position-relative">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Category</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>
-                                            <button type="button" id="${id}" class="btn small edit">Edit</button>
-                                            <button type="button" id="${id}" class="btn small delete">Delete</button>
-                                        </td>
-                                    </tr>
+                    <div class="position-relative" style="height: 93%;">
+                        <table class="table table-bordered border-primary table-sm text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="expense-list">
 
-                                </tbody>
-                            </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation" class="position-absolute bottom-0 start-50 end-50">
+                        <ul class="pagination justify-content-center">
+                            <!-- <li class="page-item mx-2"><a class="page-link btn" href="#">1</a></li> -->
                         </ul>
+                    </nav>
                 </div>
             </div>
-            <div class="card leaderboard d-none" style="width: 50%;height: 80vh;">
+            <div class="card leaderboard" style="width: 50%;height: 80vh;">
                 <div class="card-header d-flex justify-content-around">
                     <h5 class="text-center">Leaderboard</h5>
                     <button type="button" class="btn small" id="leaderboard-btn">Update
                         Board</button>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered border-primary leaderboard-list">
+                    <table class="table table-bordered border-primary">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">Name</th>
                                 <th scope="col">Total Amount</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                            </tr>
-
+                        <tbody class="leaderboard-list">
                         </tbody>
                     </table>
                 </div>
@@ -159,7 +152,7 @@
         crossorigin="anonymous"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
-    <!-- <script src="app.js"></script> -->
+    <script src="app.js"></script>
 </body>
 
 </html>
